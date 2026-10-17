@@ -1,0 +1,15 @@
+.error-boundary {
+  text-align: center;
+  padding: 2rem;
+  color: var(--error);
+}
+
+.error-boundary h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.error-boundary p {
+  color: var(--text-dim);
+  margin-bottom: 1rem;
+}

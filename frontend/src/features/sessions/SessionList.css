@@ -1,0 +1,50 @@
+.session-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.session-list-header h2 {
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.session-name {
+  color: var(--text);
+}
+
+.session-desc {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  max-width: 400px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session-date {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+}
+
+.page-info {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+}
+
+.empty-state .btn {
+  margin-top: 0.75rem;
+}

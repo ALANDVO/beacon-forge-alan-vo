@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "beacon-forge-alan-vo",
+  "owner": "ALANDVO",
+  "email": "alanvo@gmail.com",
+  "domain": "AI/ML developer tools",
+  "summary": "Work in progress: beacon-forge-alan-vo",
+  "workflows": [
+    "Create a coding-agent session and attach a goal with an optional token budget",
+    "Transition goal lifecycle (pending \u2192 running \u2192 completed | failed) with invariant enforcement",
+    "View compacted activity timeline with snapshot pruning for goals"
+  ],
+  "auth": "oidc-keycloak-saml-broker",
+  "llm_providers": [
+    "openai-compatible",
+    "anthropic",
+    "gemini",
+    "ollama"
+  ],
+  "status": "work-in-progress"
+}
