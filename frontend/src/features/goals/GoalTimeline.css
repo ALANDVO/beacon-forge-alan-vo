@@ -1,0 +1,113 @@
+.goal-timeline {
+  width: 100%;
+}
+
+.timeline-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.goal-tokens-display {
+  margin-left: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+
+.budget {
+  color: var(--warning);
+}
+
+.snapshot-card {
+  margin-bottom: 1.5rem;
+}
+
+.snapshot-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+
+.snapshot-data {
+  color: var(--text);
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.85rem;
+}
+
+.timeline-list {
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.timeline-list::before {
+  content: "";
+  position: absolute;
+  left: 0.75rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -1.125rem;
+  top: 0.75rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--accent);
+  background: var(--bg);
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.timeline-event-type {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.timeline-time {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+.timeline-tokens {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-family: "SF Mono", "Fira Code", monospace;
+  margin-bottom: 0.25rem;
+}
+
+.timeline-data {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  font-family: "SF Mono", "Fira Code", monospace;
+}
+
+.goal-timeline .empty-state {
+  text-align: center;
+  padding: 1.5rem;
+  color: var(--text-dim);
+}

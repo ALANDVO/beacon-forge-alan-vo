@@ -1,0 +1,43 @@
+# Dependencies
+.venv/
+node_modules/
+
+# Build output
+dist/
+build/
+.vite/
+*.egg-info/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep local agent metadata out of version control
+.omp/
+.antigravitycli/

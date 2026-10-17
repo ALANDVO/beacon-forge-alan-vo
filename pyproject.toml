@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "beacon-forge"
+version = "1.0.0"
+description = "AI/ML developer tool for managing and evaluating coding agent session goals"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Alan Vo", email = "alanvo@gmail.com"},
+]
+requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+dev = []
+
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["backend/tests"]
+pythonpath = ["backend"]

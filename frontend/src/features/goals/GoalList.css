@@ -1,0 +1,29 @@
+.goal-list {
+  width: 100%;
+}
+
+.goal-desc {
+  cursor: pointer;
+  color: var(--text);
+  transition: color 0.15s;
+}
+
+.goal-desc:hover {
+  color: var(--accent);
+}
+
+.goal-tokens {
+  font-family: "SF Mono", "Fira Code", monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.total-budget {
+  color: var(--text-dim);
+}
+
+.goal-list .empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-dim);
+}

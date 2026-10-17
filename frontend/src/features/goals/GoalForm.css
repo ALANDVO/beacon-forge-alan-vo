@@ -1,0 +1,27 @@
+.goal-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.goal-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.hint {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  margin-top: 0.25rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
+}
+
+.error-text {
+  color: var(--error);
+  font-size: 0.85rem;
+  margin-bottom: 0.75rem;
+}
