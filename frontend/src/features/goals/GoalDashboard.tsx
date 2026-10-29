@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { api, ApiError } from "../../api/client";
 import type {
+  CompactAllResponse,
   GoalResponse,
   PaginatedGoals,
   SessionResponse,

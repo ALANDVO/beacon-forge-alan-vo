@@ -12,6 +12,8 @@ from ..api.deps import DbDep, ViewerDep
 from ..models.event import EventType, GoalEventModel
 from ..models.goal import GoalModel, GoalStatus
 from ..models.schemas import (
+    CompactAllResponse,
+    CompactResponse,
     EventAppend,
     GoalCreate,
     GoalResponse,
@@ -338,6 +340,106 @@ async def get_timeline(
         goal_token_budget=goal.token_budget,
         latest_snapshot=_serialize_event(latest_snapshot) if latest_snapshot else None,
         events=[_serialize_event(e) for e in retained_events],
+    )
+
+
+@router.post("/goals/{goal_id}/compact", response_model=CompactResponse)
+async def compact_goal(
+    goal_id: str,
+    db: DbDep,
+    _: ViewerDep,
+) -> CompactResponse:
+    """Manually trigger compaction for a goal's event log.
+
+    Returns compaction statistics: events before/after, snapshots pruned.
+    """
+    row = await db.execute(select(GoalModel).where(GoalModel.id == goal_id))
+    goal = row.scalar_one_or_none()
+    if goal is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Goal {goal_id} not found",
+        )
+
+    ev_rows = await db.execute(
+        select(GoalEventModel)
+        .where(GoalEventModel.goal_id == goal_id)
+        .order_by(GoalEventModel.seq.asc())
+    )
+    events = ev_rows.scalars().all()
+    total_before = len(events)
+
+    compacted = _compaction.compact(events)
+
+    if compacted.deleted_event_ids:
+        await db.execute(
+            GoalEventModel.__table__.delete().where(
+                GoalEventModel.id.in_(compacted.deleted_event_ids)
+            )
+        )
+        await db.commit()
+
+    total_after = total_before - len(compacted.deleted_event_ids)
+    return CompactResponse(
+        goal_id=goal_id,
+        total_events_before=total_before,
+        total_events_after=total_after,
+        snapshots_pruned=len(compacted.deleted_event_ids),
+        latest_snapshot_id=compacted.latest_snapshot_id,
+    )
+
+
+@router.post("/goals/compact-all", response_model=CompactAllResponse)
+async def compact_all_goals(
+    db: DbDep,
+    _: ViewerDep,
+) -> CompactAllResponse:
+    """Manually trigger compaction for all goals' event logs.
+
+    Returns aggregate compaction statistics across all goals.
+    """
+    # Get all goals
+    goals_rows = await db.execute(select(GoalModel))
+    goals = goals_rows.scalars().all()
+
+    total_goals_compacted = 0
+    total_events_before = 0
+    total_events_after = 0
+    total_snapshots_pruned = 0
+
+    for goal in goals:
+        ev_rows = await db.execute(
+            select(GoalEventModel)
+            .where(GoalEventModel.goal_id == goal.id)
+            .order_by(GoalEventModel.seq.asc())
+        )
+        events = ev_rows.scalars().all()
+        if not events:
+            continue
+
+        total_before = len(events)
+        total_events_before += total_before
+
+        compacted = _compaction.compact(events)
+
+        if compacted.deleted_event_ids:
+            await db.execute(
+                GoalEventModel.__table__.delete().where(
+                    GoalEventModel.id.in_(compacted.deleted_event_ids)
+                )
+            )
+            total_goals_compacted += 1
+            total_snapshots_pruned += len(compacted.deleted_event_ids)
+
+        total_events_after += total_before - len(compacted.deleted_event_ids)
+
+    await db.commit()
+
+    return CompactAllResponse(
+        goals_compacted=total_goals_compacted,
+        total_events_before=total_events_before,
+        total_events_after=total_events_after,
+        total_snapshots_pruned=total_snapshots_pruned,
     )
 
 

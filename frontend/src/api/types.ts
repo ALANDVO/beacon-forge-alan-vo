@@ -105,6 +105,21 @@ export interface ErrorResponse {
   detail: string;
 }
 
+export interface CompactResponse {
+  goal_id: string;
+  total_events_before: number;
+  total_events_after: number;
+  snapshots_pruned: number;
+  latest_snapshot_id: string | null;
+}
+
+export interface CompactAllResponse {
+  goals_compacted: number;
+  total_events_before: number;
+  total_events_after: number;
+  total_snapshots_pruned: number;
+}
+
 export interface HealthResponse {
   status: string;
   timestamp: string;

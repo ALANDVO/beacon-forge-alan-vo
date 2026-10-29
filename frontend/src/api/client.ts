@@ -6,6 +6,8 @@
  * and no auth for local development.
  */
 import type {
+  CompactAllResponse,
+  CompactResponse,
   ErrorResponse,
   EventAppend,
   GoalCreate,
@@ -165,6 +167,18 @@ export class BeaconForgeClient {
 
   getTimeline(id: string): Promise<TimelineResponse> {
     return this.request<TimelineResponse>(`/api/goals/${id}/timeline`);
+  }
+
+  compactGoal(id: string): Promise<CompactResponse> {
+    return this.request<CompactResponse>(`/api/goals/${id}/compact`, {
+      method: "POST",
+    });
+  }
+
+  compactAllGoals(): Promise<CompactAllResponse> {
+    return this.request<CompactAllResponse>(`/api/goals/compact-all`, {
+      method: "POST",
+    });
   }
 }
 
