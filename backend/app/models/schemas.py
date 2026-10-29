@@ -96,7 +96,23 @@ class PaginatedGoals(BaseModel):
     total: int
     page: int
     per_page: int
+class CompactResponse(BaseModel):
+    """Response for manual compaction of a goal's event log."""
 
+    goal_id: str
+    total_events_before: int
+    total_events_after: int
+    snapshots_pruned: int
+    latest_snapshot_id: str | None
+
+
+class CompactAllResponse(BaseModel):
+    """Response for bulk compaction of all goals."""
+
+    goals_compacted: int
+    total_events_before: int
+    total_events_after: int
+    total_snapshots_pruned: int
 
 class ErrorResponse(BaseModel):
     detail: str
