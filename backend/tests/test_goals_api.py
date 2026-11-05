@@ -58,6 +58,96 @@ class TestSessionCreation:
         resp = await no_auth_client.post("/api/sessions", json={"name": "X"})
         assert resp.status_code == 401
 
+    async def test_list_sessions_status_filter_active(self, client: AsyncClient):
+        """Test filtering sessions by active status."""
+        # Create active sessions
+        await client.post("/api/sessions", json={"name": "Active 1"})
+        await client.post("/api/sessions", json={"name": "Active 2"})
+        # Create and archive a session
+        archived = await client.post("/api/sessions", json={"name": "To Archive"})
+        sid = archived.json()["id"]
+        await client.delete(f"/api/sessions/{sid}")
+
+        # Filter active
+        resp = await client.get("/api/sessions?status=active")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 2
+        assert all(s["status"] == "active" for s in data["items"])
+
+    async def test_list_sessions_status_filter_archived(self, client: AsyncClient):
+        """Test filtering sessions by archived status."""
+        # Create active sessions
+        await client.post("/api/sessions", json={"name": "Active 1"})
+        await client.post("/api/sessions", json={"name": "Active 2"})
+        # Create and archive a session
+        archived = await client.post("/api/sessions", json={"name": "To Archive"})
+        sid = archived.json()["id"]
+        await client.delete(f"/api/sessions/{sid}")
+
+        # Filter archived
+        resp = await client.get("/api/sessions?status=archived")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 1
+        assert all(s["status"] == "archived" for s in data["items"])
+        assert data["items"][0]["name"] == "To Archive"
+
+    async def test_list_sessions_status_filter_all(self, client: AsyncClient):
+        """Test filtering sessions with 'all' status shows everything."""
+        await client.post("/api/sessions", json={"name": "Active 1"})
+        archived = await client.post("/api/sessions", json={"name": "To Archive"})
+        sid = archived.json()["id"]
+        await client.delete(f"/api/sessions/{sid}")
+
+        resp = await client.get("/api/sessions?status=all")
+        assert resp.status_code == 200
+        data = resp.json()
+        assert data["total"] == 2
+
+    async def test_list_sessions_invalid_status(self, client: AsyncClient):
+        """Test invalid status filter returns 400."""
+        resp = await client.get("/api/sessions?status=invalid")
+        assert resp.status_code == 400
+        assert "invalid" in resp.json()["detail"].lower()
+
+    async def test_restore_archived_session(self, client: AsyncClient):
+        """Test restoring an archived session to active."""
+        create = await client.post("/api/sessions", json={"name": "To Archive and Restore"})
+        sid = create.json()["id"]
+
+        # Archive it
+        await client.delete(f"/api/sessions/{sid}")
+
+        # Verify it's archived
+        get_resp = await client.get(f"/api/sessions/{sid}")
+        assert get_resp.json()["status"] == "archived"
+
+        # Restore it
+        restore_resp = await client.post(f"/api/sessions/{sid}/restore")
+        assert restore_resp.status_code == 200
+        restored = restore_resp.json()
+        assert restored["status"] == "active"
+        assert restored["ended_at"] is None
+
+        # Verify via get
+        get_resp = await client.get(f"/api/sessions/{sid}")
+        assert get_resp.json()["status"] == "active"
+
+    async def test_restore_nonexistent_session(self, client: AsyncClient):
+        """Test restoring nonexistent session returns 404."""
+        resp = await client.post("/api/sessions/nonexistent-id/restore")
+        assert resp.status_code == 404
+
+    async def test_restore_non_archived_session(self, client: AsyncClient):
+        """Test restoring a non-archived session returns 400."""
+        create = await client.post("/api/sessions", json={"name": "Active Session"})
+        sid = create.json()["id"]
+
+        resp = await client.post(f"/api/sessions/{sid}/restore")
+        assert resp.status_code == 400
+        assert "not archived" in resp.json()["detail"].lower()
+
 
 class TestGoalLifecycle:
     async def test_create_goal_pending(self, client: AsyncClient):
