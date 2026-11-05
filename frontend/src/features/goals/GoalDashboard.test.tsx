@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import GoalDashboard from "./GoalDashboard";
 import { api } from "../../api/client";

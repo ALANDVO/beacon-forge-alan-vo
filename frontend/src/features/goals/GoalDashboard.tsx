@@ -1,15 +1,16 @@
-import { api, ApiError } from "../../api/client";
-import type {
-  CompactAllResponse,
-  GoalResponse,
-  PaginatedGoals,
-  SessionResponse,
-} from "../../api/types";
-import GoalForm from "./GoalForm";
-import GoalList from "./GoalList";
-import GoalDetail from "./GoalDetail";
-import Loading from "../../components/Loading";
-import "./GoalDashboard.css";
+import React, { useState, useEffect } from "react";
+ import { api, ApiError } from "../../api/client";
+ import type {
+   CompactAllResponse,
+   GoalResponse,
+   PaginatedGoals,
+   SessionResponse,
+ } from "../../api/types";
+ import GoalForm from "./GoalForm";
+ import GoalList from "./GoalList";
+ import GoalDetail from "./GoalDetail";
+ import Loading from "../../components/Loading";
+ import "./GoalDashboard.css";
 
 interface Props {
   session: SessionResponse;

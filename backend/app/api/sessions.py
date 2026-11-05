@@ -41,16 +41,30 @@ async def list_sessions(
     _: ViewerDep,
     page: int = 1,
     per_page: int = 20,
+    status: str | None = None,
 ) -> PaginatedSessions:
-    """List sessions with pagination, most recent first."""
+    """List sessions with pagination, most recent first.
+
+    Optional ``status`` filter: "active", "archived", or "all" (default).
+    """
     offset = (page - 1) * per_page
-    total = await db.scalar(select(func.count()).select_from(SessionModel))
-    rows = await db.execute(
-        select(SessionModel)
-        .order_by(SessionModel.created_at.desc())
-        .limit(per_page)
-        .offset(offset)
-    )
+
+    query = select(SessionModel).order_by(SessionModel.created_at.desc())
+    count_query = select(func.count()).select_from(SessionModel)
+
+    if status and status != "all":
+        try:
+            session_status = SessionStatus(status)
+            query = query.where(SessionModel.status == session_status)
+            count_query = count_query.where(SessionModel.status == session_status)
+        except ValueError:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Invalid status: {status}. Must be 'active', 'archived', or 'all'.",
+            )
+
+    total = await db.scalar(count_query)
+    rows = await db.execute(query.limit(per_page).offset(offset))
     sessions = rows.scalars().all()
     return PaginatedSessions(
         items=sessions,  # type: ignore
@@ -58,7 +72,6 @@ async def list_sessions(
         page=page,
         per_page=per_page,
     )
-
 
 @router.get("/{session_id}", response_model=SessionResponse)
 async def get_session(
@@ -119,6 +132,33 @@ async def archive_session(
         )
     session.status = SessionStatus.ARCHIVED
     session.ended_at = datetime.now(timezone.utc)
+    session.updated_at = datetime.now(timezone.utc)
+    await db.commit()
+    await db.refresh(session)
+    return session
+
+
+@router.post("/{session_id}/restore", response_model=SessionResponse)
+async def restore_session(
+    session_id: str,
+    db: DbDep,
+    _: ViewerDep,
+) -> SessionResponse:
+    """Restore an archived session back to active status."""
+    row = await db.execute(select(SessionModel).where(SessionModel.id == session_id))
+    session = row.scalar_one_or_none()
+    if session is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Session {session_id} not found",
+        )
+    if session.status != SessionStatus.ARCHIVED:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Session {session_id} is not archived (current status: {session.status.value})",
+        )
+    session.status = SessionStatus.ACTIVE
+    session.ended_at = None
     session.updated_at = datetime.now(timezone.utc)
     await db.commit()
     await db.refresh(session)
