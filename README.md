@@ -280,3 +280,7 @@ to Keycloak user properties, then configure the OIDC client
 ## License
 
 MIT © Alan Vo <alanvo@gmail.com>
+
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)

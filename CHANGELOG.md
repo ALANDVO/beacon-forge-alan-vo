@@ -34,3 +34,7 @@ Partial code published for continued development. Known issues: STATUS.md.
 - CI workflow: backend pytest, frontend npm build + test, Docker builds.
 - Full README with install/run/test steps, architecture diagram, AI/ML
   evaluation section, and security limitations.
+
+---
+
+Alan Vo · [alanvo.net](https://alanvo.net)
