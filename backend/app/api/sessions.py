@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, Query, status
 from sqlalchemy import func, select
 
 from ..api.deps import DbDep, ViewerDep
@@ -41,26 +41,26 @@ async def list_sessions(
     _: ViewerDep,
     page: int = 1,
     per_page: int = 20,
-    status: str | None = None,
+    status_filter: str | None = Query(default=None, alias="status"),
 ) -> PaginatedSessions:
     """List sessions with pagination, most recent first.
 
-    Optional ``status`` filter: "active", "archived", or "all" (default).
+    Optional ``status_filter`` filter: "active", "archived", or "all" (default).
     """
     offset = (page - 1) * per_page
 
     query = select(SessionModel).order_by(SessionModel.created_at.desc())
     count_query = select(func.count()).select_from(SessionModel)
 
-    if status and status != "all":
+    if status_filter and status_filter != "all":
         try:
-            session_status = SessionStatus(status)
+            session_status = SessionStatus(status_filter)
             query = query.where(SessionModel.status == session_status)
             count_query = count_query.where(SessionModel.status == session_status)
         except ValueError:
             raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Invalid status: {status}. Must be 'active', 'archived', or 'all'.",
+                status_code=400,
+                detail=f"Invalid status: {status_filter}. Must be 'active', 'archived', or 'all'.",
             )
 
     total = await db.scalar(count_query)
