@@ -47,6 +47,7 @@ async def list_sessions(
 
     Optional ``status_filter`` filter: "active", "archived", or "all" (default).
     """
+    # Allowed statuses: active, archived; "all" shows both.
     offset = (page - 1) * per_page
 
     query = select(SessionModel).order_by(SessionModel.created_at.desc())
