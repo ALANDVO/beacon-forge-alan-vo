@@ -1,6 +1,6 @@
 {
   "name": "beacon-forge-frontend",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "private": true,
   "description": "Beacon Forge \u2014 AI/ML developer tool for managing coding agent session goals",
   "type": "module",
