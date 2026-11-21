@@ -111,6 +111,11 @@ class TestSessionCreation:
         assert resp.status_code == 400
         assert "invalid" in resp.json()["detail"].lower()
 
+
+    async def test_create_session_empty_name(self, client: AsyncClient):
+        """Test creating a session with empty name returns 422."""
+        resp = await client.post("/api/sessions", json={"name": ""})
+        assert resp.status_code == 422
     async def test_restore_archived_session(self, client: AsyncClient):
         """Test restoring an archived session to active."""
         create = await client.post("/api/sessions", json={"name": "To Archive and Restore"})

@@ -17,7 +17,7 @@ Acceptance:
 
 Implementation: `backend/app/api/sessions.py`
 
-Tests: `backend/tests/test_goals_api.py::TestSessionCreation::test_list_sessions_invalid_status`
+Tests: `backend/tests/test_goals_api.py::TestSessionCreation::test_list_sessions_invalid_status`, `backend/tests/test_goals_api.py::TestSessionCreation::test_create_session_empty_name`
 
 ---
 
