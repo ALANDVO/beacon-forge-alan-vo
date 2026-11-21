@@ -1,6 +1,19 @@
 # Changelog
 
+## 1.5.0 — work-in-progress checkpoint
+
+Partial code published for continued development. Known issues: STATUS.md.
+
 ## 1.4.0 — work-in-progress checkpoint
+
+## 1.4.1 — incremental test update
+
+### Fixed
+- Added test_create_session_empty_name to verify Pydantic validation rejects empty session names
+
+### Changed
+- backend/tests/test_goals_api.py: Added test_create_session_empty_name test case
+
 
 Partial code published for continued development. Known issues: STATUS.md.
 
