@@ -23,9 +23,11 @@ export default function SessionList({
 }: Props) {
   const [page, setPage] = useState(1);
 
+  const [statusFilter, setStatusFilter] = useState<"active" | "archived" | "all">("all");
+
   const loadPage = async (p: number) => {
     try {
-      const data = await api.listSessions({ page: p, per_page: 20 });
+      const data = await api.listSessions({ page: p, per_page: 20, status: statusFilter });
       onSessionsChange(data);
       setPage(p);
     } catch (e) {
@@ -45,6 +47,29 @@ export default function SessionList({
     <div className="session-list" data-testid="session-list">
       <div className="session-list-header">
         <h2>Sessions</h2>
+        <div className="filter-group">
+          <button
+            className={statusFilter === "all" ? "btn btn-primary active" : "btn btn-primary"}
+            onClick={() => setStatusFilter("all")}
+            data-testid="filter-all"
+          >
+            All
+          </button>
+          <button
+            className={statusFilter === "active" ? "btn btn-primary active" : "btn btn-primary"}
+            onClick={() => setStatusFilter("active")}
+            data-testid="filter-active"
+          >
+            Active
+          </button>
+          <button
+            className={statusFilter === "archived" ? "btn btn-primary active" : "btn btn-primary"}
+            onClick={() => setStatusFilter("archived")}
+            data-testid="filter-archived"
+          >
+            Archived
+          </button>
+        </div>
         <button className="btn btn-primary" onClick={onNewSession} data-testid="new-session-btn">
           + New Session
         </button>
@@ -94,6 +119,16 @@ export default function SessionList({
                     >
                       Open
                     </button>
+                    {session.status === "archived" && (
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => onSessionSelect(session)}
+                        data-testid={`restore-session-${session.id}`}
+                        title="Restore session"
+                      >
+                        Restore
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

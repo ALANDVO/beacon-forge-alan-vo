@@ -82,10 +82,11 @@ export class BeaconForgeClient {
   }
 
   // --- Sessions ---
-  listSessions(params?: { page?: number; per_page?: number }): Promise<PaginatedSessions> {
+  listSessions(params?: { page?: number; per_page?: number; status?: string }): Promise<PaginatedSessions> {
     const q = new URLSearchParams();
     if (params?.page) q.set("page", String(params.page));
     if (params?.per_page) q.set("per_page", String(params.per_page));
+    if (params?.status) q.set("status", params.status);
     const qs = q.toString() ? `?${q.toString()}` : "";
     return this.request<PaginatedSessions>(`/api/sessions${qs}`);
   }
